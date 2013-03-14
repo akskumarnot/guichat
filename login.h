@@ -14,6 +14,7 @@ public:
 login(QWidget *parent=0);
 
 private:
+QString person_name;
 QLineEdit *nickname;
 QLineEdit *password;
 QLabel *tuxy;

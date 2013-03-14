@@ -8,12 +8,12 @@ class client:public QThread
 {
 Q_OBJECT
 public:
-client(QString ip);
+client(QString windowname,QString ip);
 
 public slots:
 void tookthis(QString);
 void dosomething();
-private:
+public:
 QTcpSocket *cli;
 
 signals:

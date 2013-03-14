@@ -4,6 +4,8 @@
 #include<QVBoxLayout>
 
 
+extern QString naam;
+
 want::want(QTcpSocket * soc,QWidget *parent):QWidget(parent)
 {
         socket=soc;
@@ -119,5 +121,7 @@ int i=0;
 		if(mod->index(i,0).data(Qt::DisplayRole).toString()==topic)
 			{b++;break;}
 		}  *b=NULL;
+
 }
+
 

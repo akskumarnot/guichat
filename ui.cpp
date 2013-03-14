@@ -6,6 +6,9 @@
 #include<QDebug>
 
 
+extern QString naam; 
+
+
 int startx,starty;bool press=false;
 
 ui::ui(QWidget *parent):QWidget(parent){}
@@ -38,10 +41,9 @@ setWindowFlags(Qt::SplashScreen);
 setWindowOpacity(0.9);
 setWindowTitle(str);
 //connect
-sender=new client("localhost");
+sender=new client(windowTitle(),"localhost");
 connect(sender,SIGNAL(sendtomain(QString)),this,SLOT(rAtMain(QString)));
 connect(this,SIGNAL(takethis(QString)),sender,SLOT(tookthis(QString)));
-
 }
 
 void ui::arrange()
@@ -94,8 +96,7 @@ if((le->hasFocus()==true) && (e->key()==Qt::Key_Return))
        le->setText("");
     }
 
-  else if(str.left(11)=="$disconnect")
-         {if(sender!=NULL){sender->terminate();delete sender;}}
+
 
   else{
    QColor color(te->textColor());
@@ -105,7 +106,11 @@ if((le->hasFocus()==true) && (e->key()==Qt::Key_Return))
    te ->setTextColor(color);
     if(sender!=NULL)
      {
-      emit takethis(le->text());
+     QString str=le->text();
+      str.prepend("$"+windowTitle()+"$"+naam+"$");
+      str.append("$");	
+	qDebug()<<str;
+      emit takethis(str);
      } 
    le->setText(""); 
   }      
@@ -115,6 +120,7 @@ if((le->hasFocus()==true) && (e->key()==Qt::Key_Return))
 
 void ui::rAtMain(QString str)
 {
+qDebug()<<"reached here wow my name is Khan and i am not a terrorist";
 QColor color(te->textColor());
 QColor c(255,46,0);
 te->setTextColor(c);
@@ -157,14 +163,23 @@ void ui::bye()
 this->close();
 }
 
-void ui::closeEvent(QCloseEvent *e){emit closing();}
+void ui::closeEvent(QCloseEvent *e){
+emit closing();
+qDebug()<<"request for delete";
+QByteArray c;
+c.append("$bye$"+ windowTitle()+"$"+ naam+"$");
+qDebug()<<"$bye$"+ windowTitle()+"$"+ naam+"$";
+sender->cli->write(c);
+sender->cli->flush();
+sender->cli->waitForBytesWritten();
+}
 
 
 void ui::newavatar()
 {
 delete sender;
 te->append("reconnecting..");
-sender=new client("localhost");
+sender=new client(windowTitle(),"localhost");
 connect(sender,SIGNAL(sendtomain(QString)),this,SLOT(rAtMain(QString)));
 connect(this,SIGNAL(takethis(QString)),sender,SLOT(tookthis(QString)));
 te->append("Hurrah !!! reconnected");

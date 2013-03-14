@@ -3,8 +3,8 @@
 #include<QByteArray>
 #include<QDataStream>
 
-
-client::client(QString ip)
+extern QString naam;
+client::client(QString windowname,QString ip)
 {
 cli=new QTcpSocket(this);
 cli->connectToHost(ip,9982);
@@ -12,7 +12,14 @@ cli->connectToHost(ip,9982);
 if(cli->waitForConnected(10000))
   {
 connect(cli,SIGNAL(readyRead()),this,SLOT(dosomething()));
-this->start();}
+this->start();
+
+QByteArray a;
+a.append("$room$"+windowname+"$"+naam+"$");
+cli->write(a);
+cli->flush();
+cli->waitForBytesWritten();
+}
 else
  {qDebug()<<"not connecting";}
 }
@@ -27,10 +34,9 @@ exec();
 
 
 void client::tookthis(QString str)
-{  qDebug()<<str;
-   cli->flush();
+{ 
    QByteArray arr;
-   arr.append(str);
+   arr.append("$message"+str);
   cli->write(arr);
    cli->flush();
  cli->waitForBytesWritten();
@@ -40,11 +46,14 @@ void client::tookthis(QString str)
 
 void client::dosomething()
 {
+qDebug()<<"got it here...yeah babydksjakdjksajdklasjkdjaskjlkdjklasjkldjlkas";
 QByteArray arr=cli->readAll();
 QString str(arr);
 emit sendtomain(str);
 cli->flush();
 }
+
+
 
 
 

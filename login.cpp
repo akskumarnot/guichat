@@ -7,6 +7,9 @@
 #include"want.h"
 
 
+
+QString naam;
+
 QTcpSocket *soc; 
 
 login::login(QWidget * parent):QWidget(parent)
@@ -27,7 +30,7 @@ nick_lab=new QLabel("<p style='color:rgb(0,114,255)'>Nickname</p>");
 pass_lab=new QLabel("<p style='color:rgb(0,114,255)'>Password</p>");
 nickname=new QLineEdit();
 password=new QLineEdit();
-
+password->setEchoMode(QLineEdit::Password);
 QVBoxLayout *vlay=new QVBoxLayout();
 vlay->addWidget(tuxy);
 tuxy->setFixedSize(350,350);
@@ -56,6 +59,7 @@ void login::mousePressEvent(QMouseEvent* e)
 
 void login::dosomething()
 	{qDebug()<<"here";
+	person_name=nickname->text();
 	  soc=new QTcpSocket();
 	connect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));
 	  soc->connectToHost("localhost",9982);
@@ -80,11 +84,13 @@ void login::readyRead()
 		QString str(arr);
                   if(str=="$invalid$")
 			{
+			   person_name="";
 			   //show on label
 			}
 				
 		  else if(str=="$valid$")
-			{	this->close();
+			{	naam=person_name;
+				this->close();				
 				want *w=new want(soc);
 				disconnect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));
 				w->request();
