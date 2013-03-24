@@ -4,6 +4,7 @@
 #include<QPushButton>
 #include<QListView>
 #include<QTcpSocket>
+#include<QCloseEvent>
 #include"ui.h"
 
 class want:public QWidget
@@ -24,5 +25,8 @@ QPushButton *update;
 QTcpSocket *socket;
 QListView *view;
 ui **bit;
+
+protected:
+void closeEvent(QCloseEvent *e);
 };
 #endif

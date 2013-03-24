@@ -18,7 +18,8 @@ QTcpSocket *cli;
 
 signals:
 void sendtomain(QString);
-
+void peoplenames(QString);
+void peoplenamesedit(QString);
 protected:
 void run();
 };

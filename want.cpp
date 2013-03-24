@@ -102,7 +102,7 @@ int i=0;
 		}
 		
 		if(*b==NULL)	
-		{	ui *u=new ui(item.data(Qt::DisplayRole).toString());
+		{	ui *u=new ui(item.data(Qt::DisplayRole).toString(),this);
 			connect(u,SIGNAL(closing()),this,SLOT(ui_closing()));
 			u->show();
 			*b=u;
@@ -123,5 +123,10 @@ int i=0;
 		}  *b=NULL;
 
 }
+
+void want::closeEvent(QCloseEvent *e)
+	{
+		//removing the sockets out if the lists
+	}
 
 

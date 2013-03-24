@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>a.jpg</file>
+        <file>close.png</file>
+        <file>fname.jpg</file>
+        <file>n.jpg</file>
+        <file>next.png</file>
+        <file>nick.jpg</file>
+        <file>pass.jpg</file>
+        <file>ref.png</file>
+        <file>signup.jpeg</file>
+        <file>smi.png</file>
+        <file>su.jpg</file>
+    </qresource>
+</RCC>

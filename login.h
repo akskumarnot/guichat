@@ -5,7 +5,7 @@
 #include<QLineEdit>
 #include<QPushButton>
 #include<QTcpSocket>
-#include<QProgressBar>
+#include"join.h"
 
 class login:public QWidget
 {
@@ -21,8 +21,7 @@ QLabel *tuxy;
 QLabel *nick_lab;
 QLabel *pass_lab;
 QPushButton *pb;
-QProgressBar *prog;
-
+join *j;
 public slots:
 void dosomething();
 void readyRead();

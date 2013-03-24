@@ -2,6 +2,7 @@
 #include<QDebug>
 #include<QByteArray>
 #include<QDataStream>
+#include<QStringList>
 
 extern QString naam;
 client::client(QString windowname,QString ip)
@@ -46,9 +47,23 @@ void client::tookthis(QString str)
 
 void client::dosomething()
 {
-qDebug()<<"got it here...yeah babydksjakdjksajdklasjkdjaskjlkdjklasjkldjlkas";
 QByteArray arr=cli->readAll();
 QString str(arr);
+
+if(str.left(6)=="$room$")
+{
+	QStringList abc=str.split("$");
+	emit sendtomain(abc.at(2));
+	emit peoplenamesedit(abc.at(2));
+	return;
+}
+
+if(str.left(7)=="$names$")
+	{
+	emit peoplenames(str);
+	return;
+	}
+
 emit sendtomain(str);
 cli->flush();
 }
