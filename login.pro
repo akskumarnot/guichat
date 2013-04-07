@@ -10,7 +10,7 @@ INCLUDEPATH += .
 
 QT+=network
 # Input
-HEADERS += client.h login.h server.h ui.h want.h join.h
-SOURCES += client.cpp login.cpp main.cpp server.cpp ui.cpp want.cpp join.cpp
+HEADERS += client.h login.h server.h ui.h want.h join.h pm.h
+SOURCES += client.cpp login.cpp main.cpp server.cpp ui.cpp want.cpp join.cpp pm.cpp
 RESOURCES += res.qrc
 

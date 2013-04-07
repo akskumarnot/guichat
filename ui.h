@@ -32,6 +32,7 @@ void bye();
 void newavatar();
 void arrangelistview(QString);
 void rearrangelistview(QString);
+void newbox();
 private:
 QTextEdit *te;
 QLineEdit *le;
@@ -39,6 +40,7 @@ QString ip;
 client *sender;
 QPushButton *ref;
 QPushButton *close1;
+QPushButton *pmme;
 QTcpSocket *soc;
 QString old[50];
 int old_count,top;

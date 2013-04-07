@@ -14,6 +14,9 @@ public:
 want(QTcpSocket * soc,QWidget *parent=0);
 void request();
 void arrange(QString);
+ui **bit;
+void onClose();
+QListView *view;
 public slots:
 void readyRead();
 void clearAll();
@@ -23,10 +26,13 @@ private:
 QPushButton *choose;
 QPushButton *update;
 QTcpSocket *socket;
-QListView *view;
-ui **bit;
+
+
 
 protected:
 void closeEvent(QCloseEvent *e);
+void mouseReleaseEvent(QMouseEvent* e);
+void mousePressEvent(QMouseEvent *e);
+void mouseMoveEvent(QMouseEvent *e);
 };
 #endif

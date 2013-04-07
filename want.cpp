@@ -4,16 +4,20 @@
 #include<QVBoxLayout>
 
 
-extern QString naam;
+extern QString naam;bool press2;int startx2,starty2;
 
 want::want(QTcpSocket * soc,QWidget *parent):QWidget(parent)
 {
         socket=soc;
 	choose=new QPushButton("ok");
 	update=new QPushButton("refresh");
+	choose->setStyleSheet(QString("QPushButton{background:black;border:1px solid rgb(0,255,70);color:rgb(0,255,70);}"));
+	update->setStyleSheet(QString("QPushButton{background:black;border:1px solid rgb(0,255,70);color:rgb(0,255,70)}"));
 	connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
 	connect(update,SIGNAL(clicked()),this,SLOT(clearAll()));
 	connect(choose,SIGNAL(clicked()),this,SLOT(dothehonors()));
+	setWindowFlags(Qt::SplashScreen);
+
 }
 
 void want::request()
@@ -63,11 +67,23 @@ QStringListModel *model=new QStringListModel();
  vlay->addLayout(hlay);
 setFixedSize(300,400);
  setLayout(vlay);
-setWindowTitle("Chat rooms");	  	
+setWindowTitle("Chat rooms");
+view->setStyleSheet(QString("QListView{background:black;}"));
+QPalette pal;
+	pal.setColor(QPalette::Text,QColor(0,255,70));
+	view->setPalette(pal);
+	view->setStyleSheet(QString("QListView{border:1px solid rgb(0,255,70);background:black;}"));
+//color of window
+QPalette pal1;
+pal1.setColor(QPalette::Window,QColor(0,0,0));
+setPalette(pal1);
+//color
+setWindowOpacity(0.7);
  }
 
 void want::clearAll()
 {
+onClose();
 QAbstractItemModel *mod=view->model();
 delete view;
 ui ** b=bit;
@@ -77,7 +93,9 @@ delete [] bit;
 delete choose;
 delete update;
 choose=new QPushButton("ok");
+choose->setStyleSheet(QString("QPushButton{background:black;border:1px solid rgb(0,255,70);color:rgb(0,255,70);}"));
 update=new QPushButton("refresh");
+update->setStyleSheet(QString("QPushButton{background:black;border:1px solid rgb(0,255,70);color:rgb(0,255,70);}"));
 connect(update,SIGNAL(clicked()),this,SLOT(clearAll()));
 connect(choose,SIGNAL(clicked()),this,SLOT(dothehonors()));
 QLayout *now=this->layout();
@@ -87,7 +105,7 @@ request();
 
 
 void want::dothehonors()
-{ 
+{
 QModelIndex item=view->currentIndex();
 QAbstractItemModel *mod=view->model();
 
@@ -97,12 +115,14 @@ ui **b=bit;
 int i=0;
 	for(i=0;i<mod->rowCount();i++)
 		{
-		if(mod->index(i,0).data(Qt::DisplayRole).toString()==item.data(Qt::DisplayRole).toString())
-			{b++;break;}
+		if(mod->index(i,0).data(Qt::DisplayRole).toString()!=item.data(Qt::DisplayRole).toString())
+			{b++;}
+		else{break;}
 		}
 		
-		if(*b==NULL)	
-		{	ui *u=new ui(item.data(Qt::DisplayRole).toString(),this);
+		if(*b==NULL)
+		{	
+			ui *u=new ui(item.data(Qt::DisplayRole).toString(),this);
 			connect(u,SIGNAL(closing()),this,SLOT(ui_closing()));
 			u->show();
 			*b=u;
@@ -118,15 +138,62 @@ ui**b=bit;
 int i=0;
 	for(i=0;i<mod->rowCount();i++)
 		{
-		if(mod->index(i,0).data(Qt::DisplayRole).toString()==topic)
-			{b++;break;}
+		if(mod->index(i,0).data(Qt::DisplayRole).toString()!=topic)
+			{b++;}
+		else{break;}
 		}  *b=NULL;
-
+	
 }
 
 void want::closeEvent(QCloseEvent *e)
 	{
-		//removing the sockets out if the lists
+		onClose();
 	}
 
+void want::onClose()
+	{
+	ui ** b=bit;
+		QStringListModel *model=(QStringListModel*)view->model();
+		int len=(model->stringList()).length();
+		
+		for(int i=0;i<len;i++)		
+			{
+				if(*b!=NULL)
+				{(*b)->close();}
+				b++;
+			}
+	}
+
+
+//drag code
+
+
+
+void want::mousePressEvent(QMouseEvent *e)
+{
+press2=true;
+startx2=e->globalX();
+starty2=e->globalY();
+}
+
+void want::mouseMoveEvent(QMouseEvent *e)
+{
+if(press2==true)
+ {
+int dx=e->globalX()-startx2;
+int dy=e->globalY()-starty2;
+
+startx2=e->globalX();
+starty2=e->globalY();
+move(x()+dx,y()+dy);
+ }
+
+}
+
+
+void want::mouseReleaseEvent(QMouseEvent* e)
+{
+Q_UNUSED(e);
+press2=false;
+}
 

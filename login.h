@@ -19,6 +19,7 @@ QLineEdit *nickname;
 QLineEdit *password;
 QLabel *tuxy;
 QLabel *nick_lab;
+QLabel *title;
 QLabel *pass_lab;
 QPushButton *pb;
 join *j;
@@ -29,5 +30,6 @@ protected:
 
 void mousePressEvent(QMouseEvent*);
 void mouseReleaseEvent(QMouseEvent*);
+void mouseMoveEvent(QMouseEvent *e);
 };
 #endif

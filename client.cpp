@@ -3,10 +3,12 @@
 #include<QByteArray>
 #include<QDataStream>
 #include<QStringList>
+#include"pm.h"
 
 extern QString naam;
-client::client(QString windowname,QString ip)
+client::client(QString windowname,QString ip,QWidget *master)
 {
+this->master=master;
 cli=new QTcpSocket(this);
 cli->connectToHost(ip,9982);
 
@@ -62,6 +64,14 @@ if(str.left(7)=="$names$")
 	{
 	emit peoplenames(str);
 	return;
+	}
+
+if(str.left(12)=="$pm$openbox$")
+	{	
+		QStringList abc=str.split("$");
+		pm *p=new pm(abc.at(4),abc.at(5),1,abc.at(3),this->master);
+		p->show();
+		return;
 	}
 
 emit sendtomain(str);

@@ -7,8 +7,9 @@
 class client:public QThread
 {
 Q_OBJECT
+QWidget *master;
 public:
-client(QString windowname,QString ip);
+client(QString windowname,QString ip,QWidget * master);
 
 public slots:
 void tookthis(QString);

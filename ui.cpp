@@ -5,8 +5,8 @@
 #include<QKeyEvent>
 #include<QDebug>
 #include<QStringListModel>
-
-
+#include"pm.h"
+#include"want.h"
 extern QString naam;
 int startx,starty;bool press=false;
 
@@ -16,6 +16,11 @@ ui::ui(QString str,QWidget *parent):QWidget(parent)
 {
 old_count=0;
 top=0;
+pmme=new QPushButton();
+QIcon icon(":pm.png");
+pmme->setIcon(icon);
+pmme->setStyleSheet(QString("QPushButton{border-radius:5px;width:30px;height:30px;}"));
+connect(pmme,SIGNAL(clicked()),this,SLOT(newbox()));
 close1=new QPushButton();
 QIcon *ic=new QIcon(":close.png");
 close1->setIconSize(QSize(60,60));
@@ -41,14 +46,44 @@ policy();
 setFixedSize(600,400);
 setWindowTitle(str);
 setWindowFlags(Qt::SplashScreen);
-setWindowOpacity(0.9);
+setWindowOpacity(0.7);
 setWindowTitle(str);
 //connect
-sender=new client(windowTitle(),"localhost");
+sender=new client(windowTitle(),"localhost",this);
 connect(sender,SIGNAL(sendtomain(QString)),this,SLOT(rAtMain(QString)));
 connect(this,SIGNAL(takethis(QString)),sender,SLOT(tookthis(QString)));
 connect(sender,SIGNAL(peoplenames(QString)),this,SLOT(arrangelistview(QString)));
 connect(sender,SIGNAL(peoplenamesedit(QString)),this,SLOT(rearrangelistview(QString)));
+
+//color of mainwindow
+
+QPalette pal=palette();	
+	pal.setColor(QPalette::Window,QColor(0,0,0));
+	pal.setColor(QPalette::WindowText,QColor(0,255,70));
+	setPalette(pal);
+//
+
+//color of textedit
+
+	
+	QPalette pal_te(QColor(0,0,0));
+	te->setPalette(pal_te);
+	te->setStyleSheet(QString("QTextEdit{border:2px solid green;border-radius:5px;} QScrollBar:vertical {  background:black;} QScrollBar:horizontal { background:black;}"));
+//color
+
+//color of le
+	QPalette pal_le(QColor(0,0,0));
+	pal_le.setColor(QPalette::Text,QColor(0,255,70));
+	le->setPalette(pal_le);
+	le->setStyleSheet(QString("QLineEdit{border:2px solid green;border-radius:5px;background:black;}"));
+//color
+//color of listview
+	QPalette pal_men(QColor(0,0,0));
+	pal_men.setColor(QPalette::Text,QColor(0,255,70));
+	men->setPalette(pal_men);
+	men->setStyleSheet(QString("QListView{border:2px solid green;border-radius:5px;} QScrollBar:vertical {  background:black;} QScrollBar:horizontal {background:black;}"));
+//color
+
 }
 
 void ui::arrange()
@@ -56,13 +91,14 @@ void ui::arrange()
 QHBoxLayout *outer=new QHBoxLayout(this);
 QVBoxLayout *lay=new QVBoxLayout();
 QHBoxLayout *hlay=new QHBoxLayout();
+hlay->addWidget(pmme);
 hlay->addWidget(ref);
 ref->setFixedSize(40,30);
 hlay->addWidget(close1);
 close1->setFixedSize(40,30);
 hlay->setAlignment(Qt::AlignRight);
 QVBoxLayout *vlay=new QVBoxLayout();
-te->zoomOut(2);
+te->zoomOut(1);
 vlay->addWidget(te);
 vlay->addWidget(le);
 vlay->setAlignment(le,Qt::AlignHCenter);
@@ -124,7 +160,7 @@ else{old_count=0;}
 
   else{
    QColor color(te->textColor());
-   QColor c(0,114,255);
+   QColor c(0,255,70);
    te->setTextColor(c);
    te->append("\nMe:"+le->text());
    te ->setTextColor(color);
@@ -175,7 +211,6 @@ if(press==true)
  {
 int dx=e->globalX()-startx;
 int dy=e->globalY()-starty;
-
 startx=e->globalX();
 starty=e->globalY();
 move(x()+dx,y()+dy);
@@ -196,10 +231,11 @@ this->close();
 }
 
 void ui::closeEvent(QCloseEvent *e){
+
 emit closing();
 qDebug()<<"request for delete";
 QByteArray c;
-c.append("$bye$"+ windowTitle()+"$"+ naam+"$");
+c.append("$bye$" + windowTitle()+"$"+ naam+"$");
 qDebug()<<"$bye$"+ windowTitle()+"$"+ naam+"$";
 sender->cli->write(c);
 sender->cli->flush();
@@ -209,14 +245,34 @@ sender->cli->waitForBytesWritten();
 
 void ui::newavatar()
 {
-delete sender;
+want * w=(want*)(this->parent());
+QAbstractItemModel *mod=w->view->model();
+  //index number
+ui **b=w->bit;
+
+int i=0;
+	for(i=0;i<mod->rowCount();i++)
+		{
+		if(mod->index(i,0).data(Qt::DisplayRole).toString()!=windowTitle())
+			{b++;}
+		else{break;}
+		}
+
+	this->close();
+ui *u=new ui(windowTitle(),(want*)this->parent());
+*b=u;
+connect(u,SIGNAL(closing()),(want*)this->parent(),SLOT(ui_closing()));
+u->show();
+
+/*sender->quit();
+sender=NULL;
 te->append("reconnecting..");
-sender=new client(windowTitle(),"localhost");
+sender=new client(windowTitle(),"localhost",this);
 connect(sender,SIGNAL(sendtomain(QString)),this,SLOT(rAtMain(QString)));
 connect(this,SIGNAL(takethis(QString)),sender,SLOT(tookthis(QString)));
 connect(sender,SIGNAL(peoplenames(QString)),this,SLOT(arrangelistview(QString)));
-connect(sender,SIGNAL(peoplenamesedit(QString)),this,SLOT(rearrangelistview(QString)));
-te->append("Hurrah !!! reconnected");
+connect(sender,SIGNAL(peoplenamesedit(QString)),this,SLOT(rearrangelistview(QString)));*/
+
 }
 
 
@@ -255,4 +311,11 @@ void ui::rearrangelistview(QString str)
 	men->setModel(model);
 	}
 
+void ui::newbox()
+	{
+		QModelIndex index=men->currentIndex();
+		if(naam!=index.data(Qt::DisplayRole).toString())		
+		{pm *m=new pm(windowTitle(),index.data(Qt::DisplayRole).toString(),0,"",this);
+		m->show();}
+	}
 
