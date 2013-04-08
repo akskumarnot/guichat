@@ -7,7 +7,8 @@
 #include<QStringListModel>
 #include"pm.h"
 #include"want.h"
-extern QString naam;
+#include<QTime>
+extern QString naam;extern QString baba;
 int startx,starty;bool press=false;
 
 ui::ui(QWidget *parent):QWidget(parent){}
@@ -49,7 +50,7 @@ setWindowFlags(Qt::SplashScreen);
 setWindowOpacity(0.7);
 setWindowTitle(str);
 //connect
-sender=new client(windowTitle(),"localhost",this);
+sender=new client(windowTitle(),baba,this);
 connect(sender,SIGNAL(sendtomain(QString)),this,SLOT(rAtMain(QString)));
 connect(this,SIGNAL(takethis(QString)),sender,SLOT(tookthis(QString)));
 connect(sender,SIGNAL(peoplenames(QString)),this,SLOT(arrangelistview(QString)));
@@ -98,7 +99,7 @@ hlay->addWidget(close1);
 close1->setFixedSize(40,30);
 hlay->setAlignment(Qt::AlignRight);
 QVBoxLayout *vlay=new QVBoxLayout();
-te->zoomOut(1);
+te->zoomOut(2);
 vlay->addWidget(te);
 vlay->addWidget(le);
 vlay->setAlignment(le,Qt::AlignHCenter);
@@ -162,7 +163,7 @@ else{old_count=0;}
    QColor color(te->textColor());
    QColor c(0,255,70);
    te->setTextColor(c);
-   te->append("\nMe:"+le->text());
+   te->append(QTime::currentTime().toString("h:m:s ap")+" Me : "+le->text()+"\n");
    te ->setTextColor(color);
     if(sender!=NULL)
      {
@@ -192,7 +193,9 @@ qDebug()<<"reached here wow my name is Khan and i am not a terrorist";
 QColor color(te->textColor());
 QColor c(255,46,0);
 te->setTextColor(c);
-te->append("\n" + str);
+te->setAlignment(Qt::AlignRight);
+te->append(QTime::currentTime().toString("h:m:s ap")+" "+ str +"\n");
+te->setAlignment(Qt::AlignLeft);
 te->setTextColor(color);
 }
 
@@ -314,7 +317,7 @@ void ui::rearrangelistview(QString str)
 void ui::newbox()
 	{
 		QModelIndex index=men->currentIndex();
-		if(naam!=index.data(Qt::DisplayRole).toString())		
+		if(naam!=index.data(Qt::DisplayRole).toString() && naam!="")		
 		{pm *m=new pm(windowTitle(),index.data(Qt::DisplayRole).toString(),0,"",this);
 		m->show();}
 	}

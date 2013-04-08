@@ -1,8 +1,8 @@
 #include "pm.h"
 #include<QKeyEvent>
+#include<QTime>
 
-
-bool press4;int startx4,starty4;extern QString naam;
+bool press4;int startx4,starty4;extern QString naam;extern QString baba;
 pm::pm(QString gpname,QString per,int mode,QString id,QWidget *parent):QWidget(parent)
 	{
 	socket=NULL;
@@ -24,13 +24,14 @@ void pm::arrange()
 	{
 		le=new QLineEdit();
 		te=new QTextEdit();
+		te->zoomOut(2);
 		le->setFixedSize(260,40);
 		te->setFixedSize(260,250);
-		te->setStyleSheet(QString("border:2px solid rgb(0,255,70);color:rgb(0,255,70)"));
+		te->setStyleSheet(QString("border:2px solid rgb(0,255,70);color:rgb(0,255,70);border-radius:10px;"));
 		te->setReadOnly(true);
 		mainLayout = new QVBoxLayout();
 		title->setAlignment(Qt::AlignHCenter);
-		le->setStyleSheet(QString("border:2px solid rgb(0,255,70);color:rgb(0,255,70)"));
+		le->setStyleSheet(QString("border:2px solid rgb(0,255,70);color:rgb(0,255,70);border-radius:10px;"));
 		mainLayout->addWidget(title);
 		mainLayout->addWidget(te);
 		mainLayout->addWidget(le);
@@ -42,7 +43,7 @@ void pm::arrange()
 void pm::setUp(){
 if(socket == NULL)
 	{socket = new QTcpSocket();
-	socket->connectToHost("localhost",9982);
+	socket->connectToHost(baba,9982);
 	qDebug()<<"got the connection for private";
 	if(socket->waitForConnected(5000))
 		{
@@ -76,7 +77,7 @@ void pm::readyRead()
 			qDebug()<<"maybe for displayinhhh";
 		if(str.left(12)=="$pm$message$")
 			{
-				te->append(person+": "+abc.at(3));
+				te->append(QTime::currentTime().toString("h:m:s ap")+"  "+person+"  : "+abc.at(3)+"\n");
 			}
 		
 	}
@@ -112,7 +113,7 @@ void pm::keyPressEvent(QKeyEvent *e)
 		if((le->hasFocus()==true) && (e->key()==Qt::Key_Return) && le->text()!="")
 			{
 								
-				te->append("Me :"+le->text());
+				te->append(QTime::currentTime().toString("h:m:s ap")+"  Me :  "+le->text()+"\n");
 				if(windowTitle()!="")
 				{sendData(le->text());}
 				le->setText("");	
@@ -130,5 +131,10 @@ void pm::sendData(QString str){
 	socket->waitForBytesWritten();
 }
 
+
+void pm::closeEvent(QCloseEvent *e)
+	{
+		
+	}
 
 

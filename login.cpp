@@ -6,7 +6,7 @@
 #include<QDebug>
 #include"want.h"
 
-
+QString baba;
 extern int n;
 QString naam;int startx3,starty3;bool press3;
 
@@ -14,10 +14,10 @@ QTcpSocket *soc; extern QString req;
 
 login::login(QWidget * parent):QWidget(parent)
 {
-
-
+baba="localhost";
+setWindowOpacity(0.9);
 setWindowFlags(Qt::SplashScreen);
-
+soc=NULL;
 j=NULL;
 setFixedSize(250,400);
 tuxy=new QLabel();
@@ -26,7 +26,7 @@ pb=new QPushButton("Sign in");
 connect(pb,SIGNAL(clicked()),this,SLOT(dosomething()));
 //
 //color
-	setWindowOpacity(0.9);
+	
 	QPalette pal=palette();	
 	pal.setColor(QPalette::Window,QColor(0,0,0));
 	pal.setColor(QPalette::WindowText,QColor(0,255,70));
@@ -65,9 +65,9 @@ vlay->addLayout(hlay);
 setLayout(vlay);
 
 //later
- soc=new QTcpSocket();
-	connect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));
-	  soc->connectToHost("localhost",9982);
+ //soc=new QTcpSocket();
+	//connect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));
+	  //soc->connectToHost("localhost",9982);
 }
 
 //move code start
@@ -129,8 +129,14 @@ move(x()+dx,y()+dy);
 void login::dosomething()
 	{if(j!=NULL){delete j;j=NULL;}
 	person_name=nickname->text();
-	 connect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));
-	  if(soc->waitForConnected(10000))
+
+	 if(soc==NULL)
+	{soc=new QTcpSocket();
+	  soc->connectToHost(baba,9982);
+	 connect(soc,SIGNAL(readyRead()),this,SLOT(readyRead()));}
+	
+				
+	  if(soc->waitForConnected(10000) && nickname->text()!="" && password->text()!="")
   		{qDebug()<<"connected";
 		 QByteArray arr;
 		 arr.append("$signin$");
@@ -142,17 +148,19 @@ void login::dosomething()
 		soc->waitForBytesWritten();	
 		}
 	  else
- 		{qDebug()<<"not connecting";} 
+ 		{qDebug()<<"not connecting";delete soc;soc=NULL;} 
 	}
 
 void login::readyRead()
 	{   qDebug()<<"ready read first socket";
       		QByteArray arr=soc->readAll();
 		QString str(arr);
+	
                   if(str=="$invalid$")
 			{
+			
 			   person_name="";
-			   //show on label
+			   //show on label				
 			}
 				
 		  else if(str=="$valid$")
@@ -166,5 +174,11 @@ void login::readyRead()
 			
 	}
 
+void login::keyPressEvent(QKeyEvent *e){
 
+if(e->key()==Qt::Key_Return)
+{connect(this,SIGNAL(someevent()),pb,SIGNAL(clicked()));
+emit someevent();
+disconnect(this,SIGNAL(someevent()),pb,SIGNAL(clicked()));}
+}
 

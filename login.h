@@ -27,9 +27,12 @@ public slots:
 void dosomething();
 void readyRead();
 protected:
-
 void mousePressEvent(QMouseEvent*);
 void mouseReleaseEvent(QMouseEvent*);
 void mouseMoveEvent(QMouseEvent *e);
+void keyPressEvent(QKeyEvent *e);
+
+signals:
+void someevent();
 };
 #endif

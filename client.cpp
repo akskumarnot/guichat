@@ -5,7 +5,7 @@
 #include<QStringList>
 #include"pm.h"
 
-extern QString naam;
+extern QString naam;extern QString baba;
 client::client(QString windowname,QString ip,QWidget *master)
 {
 this->master=master;

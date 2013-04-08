@@ -4,7 +4,7 @@
 #include<QVBoxLayout>
 
 
-extern QString naam;bool press2;int startx2,starty2;
+extern QString naam;bool press2;int startx2,starty2;extern QString baba;
 
 want::want(QTcpSocket * soc,QWidget *parent):QWidget(parent)
 {
